@@ -13,13 +13,13 @@ if [[ ! $? -eq 0 ]]; then
 fi
 
 # Check domain/path availability
-sudo yunohost app checkurl $domain$path -a subsonic
+sudo yunohost app checkurl $domain$path -a supersonic
 if [[ ! $? -eq 0 ]]; then
     exit 1
 fi
 
 
-sudo yunohost app setting subsonic admin_user -v $user
+sudo yunohost app setting supersonic admin_user -v $user
 
 YNH_MAIL=$(sudo yunohost user info $user | grep "mail: " | sed s/'mail: '/''/g)
 
@@ -28,7 +28,7 @@ path=${path%/}
 
 # Install dependencies
 echo "Install dependencies ..."
-sudo apt-get install -y openjdk-8-jre tomcat7 lame flac faad vorbis-tools ffmpeg xsltproc
+#sudo apt-get install -y openjdk-8-jre tomcat7 lame flac faad vorbis-tools ffmpeg xsltproc
 
 
 
@@ -37,55 +37,55 @@ sudo apt-get install -y openjdk-8-jre tomcat7 lame flac faad vorbis-tools ffmpeg
 
 appversion=$(cat upstream_version)
 echo "Downloading subsonic $appversion..."
-mkdir -p ../subsonic
-sudo wget http://subsonic.org/download/subsonic-6.0.beta2.deb > /dev/null 2>&1
-cp *.deb ../subsonic/
+#mkdir -p ../subsonic
+#sudo wget http://subsonic.org/download/subsonic-6.0.beta2.deb > /dev/null 2>&1
+#cp *.deb ../subsonic/
 echo "Extracting to $final_path..."
-sudo dpkg -i ../subsonic/*.deb
+#sudo dpkg -i ../subsonic/*.deb
 
 # Configure tomcat server
 
-sudo mkdir /var/subsonic
-sudo mkdir /var/subsonic/transcode
-sudo ln -s /usr/bin/lame /var/subsonic/transcode
-sudo ln -s /usr/bin/ffmpeg /var/subsonic/transcode
+#sudo mkdir /var/subsonic
+#sudo mkdir /var/subsonic/transcode
+#sudo ln -s /usr/bin/lame /var/subsonic/transcode
+#sudo ln -s /usr/bin/ffmpeg /var/subsonic/transcode
 
 
 
 sed -i "s@PATHTOCHANGE@$path@g" ../conf/nginx.conf
-sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/subsonic.conf
-sudo echo 'SUBSONIC_ARGS="--context-path=/'$path' --max-memory=190"'>/etc/default/subsonic
+sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/supersonic.conf
+sudo echo 'SUBSONIC_ARGS="--context-path=/'$path' --max-memory=190"'>/etc/default/supersonic
 
-sudo sh -c "echo 'LdapAutoShadowing=true' >> /var/subsonic/subsonic.properties"
-sudo sh -c "echo 'LdapManagerDn=' >> /var/subsonic/subsonic.properties"
-sudo sh -c "echo 'LdapEnabled=true' >> /var/subsonic/subsonic.properties"
-sudo sh -c "echo 'LdapUrl=ldap\://localhost\:389/ou\=users,dc\=yunohost,dc\=org' >> /var/subsonic/subsonic.properties"
-sudo sh -c "echo 'LdapSearchFilter=(&(objectClass\=mailAccount)(uid\={0}))' >> /var/subsonic/subsonic.properties"
-
-
+sudo sh -c "echo 'LdapAutoShadowing=true' >> /var/supersonic/subsonic.properties"
+sudo sh -c "echo 'LdapManagerDn=' >> /var/supersonic/subsonic.properties"
+sudo sh -c "echo 'LdapEnabled=true' >> /var/supersonic/subsonic.properties"
+sudo sh -c "echo 'LdapUrl=ldap\://localhost\:389/ou\=users,dc\=yunohost,dc\=org' >> /var/supersonic/subsonic.properties"
+sudo sh -c "echo 'LdapSearchFilter=(&(objectClass\=mailAccount)(uid\={0}))' >> /var/supersonic/subsonic.properties"
 
 
-data_path=/home/yunohost.app/subsonic
+
+
+data_path=/home/yunohost.app/supersonic
 
 
 VERSION="1.10.2"
 
-wget "http://localhost:8080/subsonic/rest/createUser.view?u=admin&p=admin&adminRole=Yes&username=$user&password=a&email=$YNH_MAIL&ldapAuthenticated=Yes&v=$VERSION&c=myapp" > /dev/null 2>&1
+wget "http://localhost:8080/supersonic/rest/createUser.view?u=admin&p=admin&adminRole=Yes&username=$user&password=a&email=$YNH_MAIL&ldapAuthenticated=Yes&v=$VERSION&c=myapp" > /dev/null 2>&1
 
-wget "http://localhost:8080/subsonic/rest/updateUser.view?u=admin&p=admin&adminRole=Yes&username=$user&v=$VERSION&c=myapp" > /dev/null 2>&1
-wget "http://localhost:8080/subsonic/rest/updateUser.view?u=admin&p=admin&settingsRole=Yes&username=$user&v=$VERSION&c=myapp" > /dev/null 2>&1
-wget "http://localhost:8080/subsonic/rest/updateUser.view?u=admin&p=admin&streamRole=Yes&username=$user&v=$VERSION&c=myapp" > /dev/null 2>&1
-wget "http://localhost:8080/subsonic/rest/updateUser.view?u=admin&p=admin&jukebowRole=Yes&username=$user&v=$VERSION&c=myapp" > /dev/null 2>&1
-wget "http://localhost:8080/subsonic/rest/updateUser.view?u=admin&p=admin&downloadRole=Yes&username=$user&v=$VERSION&c=myapp" > /dev/null 2>&1
-wget "http://localhost:8080/subsonic/rest/updateUser.view?u=admin&p=admin&uploadRole=Yes&username=$user&v=$VERSION&c=myapp" > /dev/null 2>&1
-wget "http://localhost:8080/subsonic/rest/updateUser.view?u=admin&p=admin&covertArtRole=Yes&username=$user&v=$VERSION&c=myapp" > /dev/null 2>&1
-wget "http://localhost:8080/subsonic/rest/updateUser.view?u=admin&p=admin&commentRole=Yes&username=$user&v=$VERSION&c=myapp" > /dev/null 2>&1
-wget "http://localhost:8080/subsonic/rest/updateUser.view?u=admin&p=admin&podcastArtRole=Yes&username=$user&v=$VERSION&c=myapp" > /dev/null 2>&1
-wget "http://localhost:8080/subsonic/rest/updateUser.view?u=admin&p=admin&shareArtRole=Yes&username=$user&v=$VERSION&c=myapp" > /dev/null 2>&1
+wget "http://localhost:8080/supersonic/rest/updateUser.view?u=admin&p=admin&adminRole=Yes&username=$user&v=$VERSION&c=myapp" > /dev/null 2>&1
+wget "http://localhost:8080/supersonic/rest/updateUser.view?u=admin&p=admin&settingsRole=Yes&username=$user&v=$VERSION&c=myapp" > /dev/null 2>&1
+wget "http://localhost:8080/supersonic/rest/updateUser.view?u=admin&p=admin&streamRole=Yes&username=$user&v=$VERSION&c=myapp" > /dev/null 2>&1
+wget "http://localhost:8080/supersonic/rest/updateUser.view?u=admin&p=admin&jukebowRole=Yes&username=$user&v=$VERSION&c=myapp" > /dev/null 2>&1
+wget "http://localhost:8080/supersonic/rest/updateUser.view?u=admin&p=admin&downloadRole=Yes&username=$user&v=$VERSION&c=myapp" > /dev/null 2>&1
+wget "http://localhost:8080/supersonic/rest/updateUser.view?u=admin&p=admin&uploadRole=Yes&username=$user&v=$VERSION&c=myapp" > /dev/null 2>&1
+wget "http://localhost:8080/supersonic/rest/updateUser.view?u=admin&p=admin&covertArtRole=Yes&username=$user&v=$VERSION&c=myapp" > /dev/null 2>&1
+wget "http://localhost:8080/supersonic/rest/updateUser.view?u=admin&p=admin&commentRole=Yes&username=$user&v=$VERSION&c=myapp" > /dev/null 2>&1
+wget "http://localhost:8080/supersonic/rest/updateUser.view?u=admin&p=admin&podcastArtRole=Yes&username=$user&v=$VERSION&c=myapp" > /dev/null 2>&1
+wget "http://localhost:8080/supersonic/rest/updateUser.view?u=admin&p=admin&shareArtRole=Yes&username=$user&v=$VERSION&c=myapp" > /dev/null 2>&1
 
 
 # Reload Nginx and regenerate SSOwat conf
 
 sudo service nginx reload
-sudo yunohost app setting subsonic skipped_uris -v "/rest"
+sudo yunohost app setting supersonic skipped_uris -v "/rest"
 sudo yunohost app ssowatconf
