@@ -1,6 +1,6 @@
-subsonic_ynh
+supersonic_ynh
 ============
-Package Subsonic for Yunohost
+Package Supersonic for Yunohost
 
-Data path for subsonic is /home/yunohost.app/subsonic
+Data path for supersonic is /home/yunohost.app/supersonic
 Please make sure than your $JAVA_HOME is defined else application can't run
